@@ -1,1 +1,101 @@
-“Hello, MOTHERFUCKER”
+<html>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+
+<!--
+<script src="https://github.com/ethereumjs/browser-builds/raw/2fb69a714afe092b06645286f14b94f41e5c062c/dist/ethereumjs-tx.js"></script> -->
+<script src="https://cdn.rawgit.com/ethereumjs/browser-builds/2fb69a714afe092b06645286f14b94f41e5c062c/dist/ethereumjs-tx.js"></script>
+
+<body>
+
+  <form id="frm1">
+    Address:
+    <input id="address" type="text" name="address">
+    <br>
+    <br>
+    <input type="button" onclick="myFunction()" value="Submit">
+  </form>
+
+  <p id="demo"></p>
+
+  <script "text/javascript">
+    var providerUrl = 'https://ropsten.infura.io/mSouWGkDHlpRLHyiFyQe/'
+    const web3 = new Web3();
+    web3.setProvider(new
+      web3.providers.HttpProvider("https://ropsten.infura.io/XXXXXX"));
+    //var web3 = new Web3(providerUrl)
+    var abiArray = [{ "constant": false, "inputs": [{ "name": "spender", "type": "address" }, { "name": "value", "type": "uint256" }], "name": "approve", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "from", "type": "address" }, { "name": "to", "type": "address" }, { "name": "value", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "who", "type": "address" }], "name": "balanceOf", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "to", "type": "address" }, { "name": "value", "type": "uint256" }], "name": "transfer", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "spender", "type": "address" }, { "name": "value", "type": "uint256" }, { "name": "extraData", "type": "bytes" }], "name": "approveAndCall", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "owner", "type": "address" }, { "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "owner", "type": "address" }, { "indexed": true, "name": "spender", "type": "address" }, { "indexed": false, "name": "value", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "from", "type": "address" }, { "indexed": true, "name": "to", "type": "address" }, { "indexed": false, "name": "value", "type": "uint256" }], "name": "Transfer", "type": "event" }]
+    var privateKey = 'cf92554658cca87787434fdf8b7eec7dbe7a2d71d0f3d6c769f7ea212bf4017c'
+    var from = '0x7bE735a5355aC3947af75D845B500a29Abb20Aa5'
+
+    var contractAddress = '0xb1d1980b091e043131489f58932de503eaeffe3f'
+    var contract = web3.eth.contract(abiArray).at(contractAddress);
+
+    // var to = '0xb3Dc54fCec42979cC779e977226e5eD7fBF71201'
+    function myFunction() {
+      document.getElementById("frm1").submit();
+    }
+
+    function myFunction() {
+      var to = document.getElementById("address").value
+
+      getGasPrice()
+        .then(function (res) {
+          var gasPrice = res.toString()
+          getTransactionCount()
+            .then(function (res) {
+              var nonce = res.toString()
+              var data = contract.transfer.getData(to, 1000000000000000000, { from: from });
+              var gasLimit = 90000;
+
+              var rawTransaction = {
+                from,
+                nonce: web3.toHex(nonce),
+                gasPrice: web3.toHex(gasPrice),
+                gasLimit: web3.toHex(gasLimit),
+                to: contractAddress,
+                value: "0x",
+                data: data,
+                chainId: "0x03"
+              };
+              let privKeyBuffer = new EthJS.Buffer.Buffer(privateKey, 'hex')
+
+              var tx = new EthJS.Tx(rawTransaction)
+              tx.sign(privKeyBuffer)
+              var serializedTx = tx.serialize().toString('hex')
+
+              web3.eth.sendRawTransaction('0x' + serializedTx, function (err, hash) {
+                if (!err)
+                  document.getElementById("demo").innerHTML = 'https://ropsten.etherscan.io/tx/' + hash;
+                else
+                  console.log(err);
+              });
+            })
+        })
+    }
+    function getGasPrice() {
+      return new Promise(
+        function (resolve) {
+          web3.eth.getGasPrice(
+            function (err, result) {
+              resolve(result)
+            })
+        }
+      )
+    }
+    function getTransactionCount() {
+      return new Promise(
+        function (resolve) {
+          web3.eth.getTransactionCount(from,
+            function (err, result) {
+              resolve(result)
+            })
+        }
+      )
+    }
+
+
+  </script>
+</body>
+
+</html>
