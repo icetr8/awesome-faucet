@@ -1,6 +1,7 @@
 <html>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+<script src="https://unpkg.com/@cityofzion/neon-js" />
 
 <!--
 <script src="https://github.com/ethereumjs/browser-builds/raw/2fb69a714afe092b06645286f14b94f41e5c062c/dist/ethereumjs-tx.js"></script> -->
@@ -9,11 +10,19 @@
 <body>
 
   <form id="frm1">
-    Address:
-    <input id="address" type="text" name="address">
+    <p id="wit">Bifrost ERC20 token faucet</p>
+    <input id="address" type="text" name="address" placeholder="paste ETH address">
     <br>
     <br>
     <input type="button" onclick="myFunction()" value="Submit">
+  </form>
+
+  <form id="neo-form">
+    <p id="wit">NEO faucet</p>
+    <input id="address" type="text" name="neo-address" placeholder="paste NEO address">
+    <br>
+    <br>
+    <input type="button" onclick="neo()" value="Submit">
   </form>
 
   <p id="demo"></p>
@@ -95,6 +104,41 @@
     }
 
 
+  </script>
+
+  <script "text/javascript">
+    function neo() {
+      console.log('neo')
+      var privateKey = 'cf92554658cca87787434fdf8b7eec7dbe7a2d71d0f3d6c769f7ea212bf4017c'
+      var address = document.getElementById("address").value
+
+      var apiProvider = new Neon.api.neoscan.instance('TestNet')
+
+      const acct = new Neon.wallet.Account(privateKey);
+
+      const intent = Neon.api.makeIntent(
+        { NEO: 1 },
+        "ASnvrnu1dYyaA1hbSV8cwWpYmVPXCsUjac"
+      );
+      const config = {
+        api: apiProvider, // The network to perform the action, MainNet or TestNet.
+        account: acct, // This is the address which the assets come from.
+        intents: intent // This is where you want to send assets to.
+      };
+
+      Neon.api.sendAsset(config)
+        .then(config => {
+
+          if (!config.response.result.succeed) {
+            console.log('errrr')
+            document.getElementById("demo").innerHTML = config.response.result.message
+          }
+          document.getElementById("demo").innerHTML = 'https://neoscan-testnet.io/transaction/' + config.tx.hash;
+        })
+        .catch(err => {
+          document.getElementById("demo").innerHTML = 'error try again later';
+        })
+    }
   </script>
 </body>
 
