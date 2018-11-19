@@ -138,12 +138,13 @@
                 .then(config => {
 
                     if (!config.response.result.succeed) {
-                        console.log('errrr')
+                        console.error(err)
                         document.getElementById("demo").innerHTML = config.response.result.message
                     }
                     document.getElementById("demo").innerHTML = 'https://neoscan-testnet.io/transaction/' + config.tx.hash;
                 })
                 .catch(err => {
+                    console.error(err)
                     document.getElementById("demo").innerHTML = 'error try again later';
                 })
         }
