@@ -138,7 +138,6 @@
                 .then(config => {
 
                     if (!config.response.result.succeed) {
-                        console.error(err)
                         document.getElementById("demo").innerHTML = config.response.result.message
                     }
                     document.getElementById("demo").innerHTML = 'https://neoscan-testnet.io/transaction/' + config.tx.hash;
