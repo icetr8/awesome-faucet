@@ -1,4 +1,7 @@
 <html>
+<head>
+  <title>Awesome Faucet v0.1</title>
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
 <script src="https://unpkg.com/@cityofzion/neon-js"></script>
@@ -6,7 +9,7 @@
 <!--
 < script src = "https://github.com/ethereumjs/browser-builds/raw/2fb69a714afe092b06645286f14b94f41e5c062c/dist/ethereumjs-tx.js" ></script > -->
 <script src="https://cdn.rawgit.com/ethereumjs/browser-builds/2fb69a714afe092b06645286f14b94f41e5c062c/dist/ethereumjs-tx.js"></script>
-
+</head>
 <body>
 
     <form id="frm1">
@@ -16,7 +19,7 @@
         <br>
         <input type="button" onclick="myFunction()" value="Submit">
     </form>
-
+<hr>
    <form id="neo-form">
     <p id="wit">NEO faucet</p>
     <input id="neo-address" type="text" name="neo-address" placeholder="paste NEO address">
@@ -24,7 +27,7 @@
     <br>
     <input type="button" onclick="neo()" value="Submit">
   </form>
-
+<hr>
   <form id="nep5-form">
     <p id="wit">8DT NEP5 token faucet</p>
     <input id="nep5-address" type="text" name="nep5-address" placeholder="paste NEO address">
