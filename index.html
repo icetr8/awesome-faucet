@@ -4,6 +4,7 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/0.14.0/stellar-sdk.min.js"></script>
 <script src="https://unpkg.com/@cityofzion/neon-js"></script>
 
 <!--
@@ -34,6 +35,24 @@
     <br>
     <br>
     <input type="button" onclick="nep5()" value="Submit">
+  </form>
+
+  <form id="stellar-asset-form">
+    <p id="wit">PFFT Stellar asset faucet</p>
+    <input id="stellar-asset-address" type="text" name="stellar-asset-address" placeholder="paste XLM address">
+    <input id="stellar-asset-memo" type="text" name="stellar-asset-memo" placeholder="paste memo">
+    <br>
+    <br>
+    <input type="button" onclick="stellarAsset()" value="Submit">
+  </form>
+
+  <form id="lumens-form">
+    <p id="wit">XLM Stellar Lumens faucet</p>
+    <input id="lumens-address" type="text" name="lumens-address" placeholder="paste XLM address">
+    <input id="lumens-memo" type="text" name="lumens-memo" placeholder="paste memo">
+    <br>
+    <br>
+    <input type="button" onclick="lumens()" value="Submit">
   </form>
 
     <p id="demo"></p>
@@ -192,6 +211,72 @@
             }
         }
     </script>
+
+    <script "text/javascript">
+      async function stellarAsset() {
+        console.log('stellarAsset')
+        StellarSdk.Network.useTestNetwork();
+        var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+        var address = document.getElementById("stellar-asset-address").value
+        const text = document.getElementById("stellar-asset-memo").value
+        const memo = StellarSdk.Memo.text(text);
+        const wat = "SAUN25TQKJEF4XSGQSKTFEGHK6XWVHXVU4RJPCDGALX3EH4ZN2LRJVXB"
+        const issuer = "GADYDBUGM7VYJTWVQZUH7LJW6D2IQ6KJDEZ5ZASLZAHYSSNVZKDYXXVI"
+
+        const faucetKeys = StellarSdk.Keypair
+          .fromSecret(wat)
+        var PFFT = new StellarSdk.Asset('PFFT', issuer);
+
+          server.loadAccount(faucetKeys.publicKey())
+            .then(async function(source) {
+              var transaction = new StellarSdk.TransactionBuilder(source, {fee: 100, memo})
+                .addOperation(StellarSdk.Operation.payment({
+                  destination: address,
+                  asset: PFFT,
+                  amount: '1',
+              })).setTimeout(1000)
+              .build();
+          transaction.sign(faucetKeys);
+        console.log(transaction)
+        const { _links: {transaction: { href }}} = await server.submitTransaction(transaction);
+
+        document.getElementById("demo").innerHTML = href
+          })
+      }
+    </script>
+
+<script "text/javascript">
+  async function lumens() {
+    console.log('lumens')
+    StellarSdk.Network.useTestNetwork();
+    var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+
+    var address = document.getElementById("lumens-address").value
+    const text = document.getElementById("lumens-memo").value
+    const memo = StellarSdk.Memo.text(text);
+
+    const wat = "SAUN25TQKJEF4XSGQSKTFEGHK6XWVHXVU4RJPCDGALX3EH4ZN2LRJVXB"
+    console.log(memo)
+    const faucetKeys = StellarSdk.Keypair
+        .fromSecret(wat)
+
+    server.loadAccount(faucetKeys.publicKey())
+      .then(async function(source) {
+        var transaction = new StellarSdk.TransactionBuilder(source, {fee: 100, memo})
+          .addOperation(StellarSdk.Operation.payment({
+            destination: address,
+            asset: StellarSdk.Asset.native(),
+            amount: '1',
+          })).setTimeout(1000)
+          .build();
+        transaction.sign(faucetKeys);
+
+        const { _links: {transaction: { href }}} = await server.submitTransaction(transaction);
+
+        document.getElementById("demo").innerHTML = href
+      })
+  }
+</script>
 </body>
 
 </html>
